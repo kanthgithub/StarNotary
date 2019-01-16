@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Star Notary</title>
+        <script src="./app.js"></script>
+    </head>
+
+    <body>
+        <div class="container-contact100">
+            <div class="wrap-contact100">
+                <form class="contact100-form" method="POST">
+                    <span class="contact100-form-title">
+                        Dencetralized Star Notarization
+                    </span>
+    
+                    <div class="wrap-input100 bg1">
+                        <span class="label-input100">Star Name *</span>
+                        <input class="input100" type="text" id="star-name" placeholder="Enter Your Star Name">
+                    </div>
+    
+                    <div class="wrap-input100 bg1 rs1-wrap-input100">
+                        <span class="label-input100">Star Right Ascension: *</span>
+                        <input class="input100" type="text" id="right-ascension" placeholder="Enter Star Right Ascension">
+                    </div>
+    
+                    <div class="wrap-input100 bg1 rs1-wrap-input100">
+                        <span class="label-input100">Star Declination: *</span>
+                        <input class="input100" type="text" id="declination" placeholder="Enter Star Declination">
+                    </div>
+    
+                    <div class="wrap-input100 bg1 rs1-wrap-input100">
+                        <span class="label-input100">Star Magnitude: *</span>
+                        <input class="input100" type="text" id="magnitude" placeholder="Enter Star Magnitude">
+                    </div>
+    
+                    <div class="wrap-input100 bg1 rs1-wrap-input100">
+                        <span class="label-input100">Token ID: *</span>
+                        <input class="input100" type="text" id="token-id" placeholder="Enter Token ID">
+                    </div>
+    
+                    <div class="wrap-input100 bg0">
+                        <span class="label-input100">Write story about Your Star *</span>
+                        <textarea class="input100" id="story" placeholder="Your story here..."></textarea>
+                    </div>
+    
+                    <div class="container-contact100-form-btn">
+                        <button class="contact100-form-btn" type="button" onclick="App.createStar()">
+                            <span>
+                                Claim Star
+                                <i aria-hidden="true"></i>
+                            </span>
+                        </button>
+                    </div>
+    
+                    <span class="contact100-form-title2">
+                        Get Star Information
+                    </span>	
+    
+                    <div class="wrap-input100 rs1-wrap-input100" data-validate="Please Enter Your Token ID">
+                        <span class="label-input100">Enter Token ID *</span>
+                        <input class="input100" type="text" id="cliamed-token-id" placeholder="Enter Your Token ID">
+                    </div>
+    
+                    <div class="container-contact100-wrap-btn rs1-wrap-input100">
+                        <button class="contact100-form-btn" type="button" onclick="App.getStarInfo()">
+                            <span>
+                                Get Star Information
+                                <i aria-hidden="true"></i>
+                            </span>
+                        </button>
+                    </div>
+                    
+                    <div class="wrap-input100 bg0">
+                        <textarea class="input100" id="star-info" placeholder="Find Your Star Information Here"></textarea>
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+
+    </body>
+</html>
