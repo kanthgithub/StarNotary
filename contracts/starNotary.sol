@@ -56,10 +56,18 @@ contract StarNotary is ERC721 {
     }
 
     function exchangeStars(uint256 token1, uint256 token2, address starOwner2) public {
-        require(this.ownerOf(tokenId) == msg.sender);
-        
-        transferFrom(msg.sender, starOwner2, token1);
-        transferFrom(starOwner2, msg.sender, token2);
+        require(this.ownerOf(token1) == msg.sender);
+        address currentOwner = this.ownerOf(token1);
+        address newOwner = starOwner2;
+
+        require(currentOwner != newOwner);
+
+        transferFrom(currentOwner, newOwner, token1);
+
+        approve(currentOwner, token2);
+
+        transferFrom(newOwner, currentOwner, token2);
+
     }
 
     function buyStar(uint256 tokenId) public payable { 
