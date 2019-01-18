@@ -5,9 +5,9 @@ import 'openzeppelin-solidity/contracts/token/ERC721/ERC721.sol';
 contract StarNotary is ERC721 {
 
 
-    string public constant name = "SE7EN";
-    string public constant symbol = "SVEN";
-    uint public INITIAL_SUPPLY = 10000;
+    //string public constant name = "SE7EN";
+    //string public constant symbol = "SVEN";
+    //string public constant TokenID = "2409";
 
 
     struct Coordinates {
@@ -17,7 +17,7 @@ contract StarNotary is ERC721 {
     }
 
     struct Star { 
-        string name;
+        string starName;
         string story;
         Coordinates coordinates;
     }
@@ -27,9 +27,9 @@ contract StarNotary is ERC721 {
     mapping(bytes32 => bool) public starHashMap;
 
 
-    function createStar(string name, string story,  string ra, string dec, string mag, uint256 tokenId) public {
+    function createStar(string starName, string story,  string ra, string dec, string mag, uint256 tokenId) public {
         //check if tokenId already exists
-        require(keccak256(abi.encodePacked(tokenIdToStarInfo[tokenId].name)) == keccak256(""));
+        require(keccak256(abi.encodePacked(tokenIdToStarInfo[tokenId].starName)) == keccak256(""));
 
         //check input 
         require(keccak256(abi.encodePacked(ra)) != keccak256(""));
@@ -39,7 +39,7 @@ contract StarNotary is ERC721 {
         require(!checkIfStarExist(ra, dec, mag));
 
         Coordinates memory newCoordinates = Coordinates(ra, dec, mag);
-        Star memory newStar = Star(name, story, newCoordinates);
+        Star memory newStar = Star(starName, story, newCoordinates);
 
         tokenIdToStarInfo[tokenId] = newStar;
 
@@ -56,13 +56,10 @@ contract StarNotary is ERC721 {
     }
 
     function exchangeStars(uint256 token1, uint256 token2, address starOwner2) public {
-        require(this.ownerOf(token1) == msg.sender);
-
-        _removeTokenFrom(msg.sender, token1);
-        _addTokenTo(starOwner2, token1);
-
-        _removeTokenFrom(starOwner2, token2);
-        _addTokenTo(msg.sender, token2);
+        require(this.ownerOf(tokenId) == msg.sender);
+        
+        transferFrom(msg.sender, starOwner2, token1);
+        transferFrom(starOwner2, msg.sender, token2);
     }
 
     function buyStar(uint256 tokenId) public payable { 
@@ -82,8 +79,11 @@ contract StarNotary is ERC721 {
         }
     }
 
-    function getOwnerOf(uint256 tokenId) public view returns(address owner){
-        return this.ownerOf(tokenId);
+    function transferStar(address transferTo, uint256 tokenId) public payable {
+        require(this.ownerOf(tokenId) == msg.sender);
+        
+        _removeTokenFrom(msg.sender, tokenId);
+        _addTokenTo(transferTo, tokenId);
     }
 
     function checkIfStarExist(string ra, string dec, string mag) public view returns(bool) {
@@ -95,7 +95,7 @@ contract StarNotary is ERC721 {
     }
 
     function tokenIdToStarInfo(uint256 tokenId) public view returns(string, string, string, string, string) {
-        return (tokenIdToStarInfo[tokenId].name,
+        return (tokenIdToStarInfo[tokenId].starName,
          tokenIdToStarInfo[tokenId].story,
         tokenIdToStarInfo[tokenId].coordinates.ra,
         tokenIdToStarInfo[tokenId].coordinates.dec,
