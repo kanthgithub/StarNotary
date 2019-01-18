@@ -9,81 +9,28 @@ import '../scripts/hotsnackbar'
 import { default as Web3 } from 'web3'
 import { default as contract } from 'truffle-contract'
 
+const hotsnackbar = require('./hotsnackbar');
+
 // Import our contract artifacts and turn them into usable abstractions.
 import StarNotaryArtifact from '../../build/contracts/StarNotary.json'
 
 // StarNotary is our usable abstraction, which we'll use through the code below.
 const StarNotary = contract(StarNotaryArtifact)
-const starNotary = StarNotary.at('0x345ca3e014aaf5dca488057592ee47305d9b3e10') 
 
 // The following code is simple to show off interacting with your contracts.
 // As your needs grow you will likely need to change its form and structure.
 // For application bootstrapping, check out window.addEventListener below.
+var accounts;
+var account;
+var star;
 
-const createStar = async () => {
-    web3.eth.getAccounts(function(error, accounts) { 
-      if (error) { 
-          hotsnackbar(false, error);
-          return
-      }
-
-      const account = accounts[0]
-      const name = "Star Name:" + document.getElementById("star-name").value
-      const story = "Story: " + document.getElementById("story").value
-      const ra = "Right Ascension: " + document.getElementById("right-ascension").value
-      const dec = "Declination: " + document.getElementById("declination").value
-      const mag = "Magnitude: " + document.getElementById("magnitude").value
-      const tokenId = document.getElementById("token-id").value
-
-      starNotary.createStar(name, story, ra, dec, mag, tokenId, {from:account, gas:4000000}, 
-          function (error, result){ 
-              if (!error){
-                  hotsnackbar(false, "txHash:" + result + ", transaction pending");
-                  let starClaimedEvent = starNotary.Transfer()
-                  starClaimedEvent.watch(function(error, result) {
-                      if (!error) {
-                          hotsnackbar(false, 'transaction complete!');
-                      } else {
-                          hotsnackbar(false, 'watching for star claimed event is failing');
-                      }
-                  })
-              } else{
-                  hotsnackbar(false, error);
-              }
-          })
-  })
-}
-
-const getStarInfo = async() => {
-  const instance = await StarNotary.deployed();
-  web3.eth.getAccounts(function(error, accounts){
-      if (error) {
-          hotsnackbar(false, error);
-          return
-      }
-
-      const tokenId = document.getElementById("cliamed-token-id").value
-      
-    instance.tokenIdToStarInfo.call(tokenId, function(error, result) {
-          if (!error) {
-              var formatString = result.toString();
-              formatString = formatString.replace(/,/g, "\n");
-              document.getElementById("star-info").value = formatString;
-              hotsnackbar(false, 'Star Information Found!');
-          } else {
-              hotsnackbar(false, error);
-          }
-      })
-  })
-}
 
 const App = {
   start: function () {
     const self = this
 
-    // Bootstrap the MetaCoin abstraction for Use.
-    StarNotary.setProvider(web3.currentProvider)
-
+    StarNotary.setProvider(web3.currentProvider);
+    
     // Get the initial account balance so it can be displayed.
     web3.eth.getAccounts(function (err, accs) {
       if (err != null) {
@@ -107,15 +54,64 @@ const App = {
     status.innerHTML = message
   },
 
-  createStar : function () {
-    createStar();
+  createStar : async() => {
+    const name = "Star Name:" + document.getElementById("star-name").value
+    const story = "Story: " + document.getElementById("story").value
+    const ra = "Right Ascension: " + document.getElementById("right-ascension").value
+    const dec = "Declination: " + document.getElementById("declination").value
+    const mag = "Magnitude: " + document.getElementById("magnitude").value
+    const tokenId = document.getElementById("token-id").value
+
+    StarNotary.deployed().then(function(instance) {
+      star = instance;
+      return star.createStar(name, story, ra, dec, mag, tokenId, {from: account, gas:4000000});
+    }).then(function(error, result) {
+      if (!error){
+        hotsnackbar(false, "txHash:" + result + ", transaction pending");
+        let starClaimedEvent = starNotary.Transfer()
+        starClaimedEvent.watch(function(error, result) {
+            if (!error) {
+                hotsnackbar(false, 'transaction complete!' + result);
+            } else {
+                hotsnackbar(false, 'watching for star claimed event is failing' + result);
+            }
+        })
+    }
+    }).catch(function(e) {
+      console.log(e);
+      hotsnackbar(false, 'Error sending coin; see log.');
+    });
   },
 
-  getStarInfo : function () {
-    getStarInfo();
+  getStarInfo : async() => {
+    const tokenId = document.getElementById("cliamed-token-id").value
+
+    StarNotary.deployed().then(function(instance){
+      star = instance;
+      return star.tokenIdToStarInfo.call(tokenId, {from:account}); 
+    }).then(function(value){
+        var formatString = value.valueOf().toString();
+        formatString = formatString.replace(/,/g, "\n");
+        document.getElementById("star-info").value = formatString;
+        hotsnackbar(false, 'Star Information Updated!');
+    }).catch(function (e){
+      console.log(e)
+    });
   },
+
+  createToken : async () => {
+    StarNotary.deployed().then(function(instance){
+      star = instance;
+      return  await star.mintUniqueTokenTo(account, 'se7en', 'SEVN', {from: accounts[0]});
+    }).then(function(error, result){
+      if(error) {
+        hotsnackbar(false, 'Oops! Token cannot be created!');
+      }
+    });   
+  }
 
 }
+
 
 window.App = App
 

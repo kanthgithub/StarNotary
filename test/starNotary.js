@@ -3,13 +3,40 @@ const StarNotary = artifacts.require('./starNotary.sol')
 
 let instance;
 let accounts;
+const name = "SE7EN";
+const symbol = "SVEN"
+
+const starName = 'Star power 103!'
+const story = 'I love my wonderful star'
+const ra = 'ra_032.155'
+const dec = 'dec_121.874'
+const mag = 'mag_245.978'
+const name2 = 'Star power 104!'
+
 
 contract('StarNotary', async (accs) => {
     accounts = accs;
     instance = await StarNotary.deployed();
   });
 
-  it('can Create a Star', async() => {
+  it('The token name and token symbol are added properly', async () => {
+    expect(await instance.symbol()).to.equal(symbol)
+    expect(await instance.name()).to.equal(name)
+  });
+
+  it('2 users can exchange their stars', async () => {
+      let user2 = accounts[1];
+      let token1 = 1;
+      let token2 = 2;
+
+      await instance.createStar(starName, story, ra, dec, mag, token1, {from: accounts[0]});
+      await instance.createStar(name2, story, ra, dec, mag, token2, {from: user2});
+
+      await instance.exchangeStars(token1, token2, user2);
+      //assert.equal(await await instance.ownerOf.call(token2), accounts[0]);
+  });
+
+  /*it('can Create a Star', async() => {
     let tokenId = 1;
     await instance.createStar('Awesome Star!', tokenId, {from: accounts[0]})
     assert.equal(await instance.tokenIdToStarInfo.call(tokenId), 'Awesome Star!')
@@ -61,7 +88,9 @@ contract('StarNotary', async (accs) => {
     await instance.buyStar(starId, {from: user2, value: starPrice, gasPrice:0})
     const balanceAfterUser2BuysStar = web3.eth.getBalance(user2)
     assert.equal(balanceOfUser2BeforeTransaction.sub(balanceAfterUser2BuysStar), starPrice);
-  });
+  }); */
+
+
 
   // Write Tests for:
 

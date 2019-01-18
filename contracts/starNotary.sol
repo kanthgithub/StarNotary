@@ -4,6 +4,12 @@ import 'openzeppelin-solidity/contracts/token/ERC721/ERC721.sol';
 
 contract StarNotary is ERC721 {
 
+
+    string public constant name = "SE7EN";
+    string public constant symbol = "SVEN";
+    uint public INITIAL_SUPPLY = 10000;
+
+
     struct Coordinates {
         string ra;
         string dec;
@@ -15,8 +21,6 @@ contract StarNotary is ERC721 {
         string story;
         Coordinates coordinates;
     }
-
-    uint256 public tokenCount;
 
     mapping(uint256 => Star) public tokenIdToStarInfo; 
     mapping(uint256 => uint256) public starsForSale;
@@ -51,6 +55,16 @@ contract StarNotary is ERC721 {
         starsForSale[tokenId] = price;
     }
 
+    function exchangeStars(uint256 token1, uint256 token2, address starOwner2) public {
+        require(this.ownerOf(token1) == msg.sender);
+
+        _removeTokenFrom(msg.sender, token1);
+        _addTokenTo(starOwner2, token1);
+
+        _removeTokenFrom(starOwner2, token2);
+        _addTokenTo(msg.sender, token2);
+    }
+
     function buyStar(uint256 tokenId) public payable { 
         require(starsForSale[tokenId] > 0);
         
@@ -66,6 +80,10 @@ contract StarNotary is ERC721 {
         if (msg.value > starCost) { 
             msg.sender.transfer(msg.value - starCost);
         }
+    }
+
+    function getOwnerOf(uint256 tokenId) public view returns(address owner){
+        return this.ownerOf(tokenId);
     }
 
     function checkIfStarExist(string ra, string dec, string mag) public view returns(bool) {
