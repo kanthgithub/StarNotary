@@ -11,40 +11,47 @@ const story = 'I love my wonderful star'
 const ra = 'ra_032.155'
 const dec = 'dec_121.874'
 const mag = 'mag_245.978'
-const starName2 = 'Star power 104!'
+
+const starName2 = 'Abhijeet!'
+const story2 = 'Idiot Stars'
+const ra2 = "ra_48.155"
+const dec2 = 'dec_98.874'
+const mag2 = 'mag_112.245'
+
+const token1 = 101;
+const token2 = 202;
 
 let defaultAccount = accounts[0];
 let account1 = accounts[1];
 let account2 = accounts[2];
 let starPrice = web3.toWei(.01, "ether");
 
+var instance;
+
 beforeEach(async() => { 
   this.contract = await StarNotary.new({from: defaultAccount})
 })
 
-/*it('The token name and token symbol are added properly', async () => {
-   expect(await this.contract.symbol()).to.equal(symbol)
-   expect(await this.contract.name()).to.equal(name)
-  }); */
+it('should be able to deploy and mint ERC721 token', async () => {
+  expect(await this.contract.symbol()).to.equal(symbol)
+  expect(await this.contract.name()).to.equal(name)
+})
   
-  describe('Exchange Stars', () =>  {
-    let token1 = 101;
-    let token2 = 202;
+  it('Exchange Stars', async() =>  {
 
-    it('User 1 creates Star', async() => {
       await this.contract.createStar(starName, story, ra, dec, mag, token1, {from: account1});
+
+      await this.contract.createStar(starName2, story2, ra2, dec2, mag2, token2, {from: account2});
+
+      await this.contract.exchangeStars(token1, token2, account2, {from: account1});
+
+      assert.equal(await this.contract,ownerOf.call(token1), account2);
+      assert.equal(await this.contract.ownerOf.call(token2), account1);
+    });
+
+    it('Creates Star', async() => {
+      await this.contract.createStar(starName, story, ra, dec, mag, token1, {from:account1});
       assert.equal(await this.contract.ownerOf.call(token1), account1);
-    });
-
-    it('User 2 creates Star', async() => {
-      await this.contract.createStar(starName2, story, ra, dec, mag, token2, {from: account2});
-      assert.equal(await this.contract.ownerOf.call(token2), account2);
-    });
-
-    it('Users exchange Stars', async() => {
-      await this.contract.exchangeStars(token1, token2, account2);
-      assert.equal(await this.contract.ownerOf.call(token2), account2);
-      console.log(await this.contract.ownerOf.call(token2));
     });
 
   });
@@ -60,7 +67,7 @@ beforeEach(async() => {
       assert.equal(await instance.ownerOf.call(tokenId), account1);
     }); */
   
-  });
+ 
 
   
   /*it('can Create a Star', async() => {

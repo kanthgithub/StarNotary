@@ -5,9 +5,9 @@ import 'openzeppelin-solidity/contracts/token/ERC721/ERC721.sol';
 contract StarNotary is ERC721 {
 
 
-    //string public constant name = "SE7EN";
-    //string public constant symbol = "SVEN";
-    //string public constant TokenID = "2409";
+    string public constant name = "SE7EN";
+    string public constant symbol = "SVEN";
+    uint256 public constant TokenID = 2409;
 
 
     struct Coordinates {
@@ -25,6 +25,7 @@ contract StarNotary is ERC721 {
     mapping(uint256 => Star) public tokenIdToStarInfo; 
     mapping(uint256 => uint256) public starsForSale;
     mapping(bytes32 => bool) public starHashMap;
+    mapping(uint256 => address) public transferedOwner;
 
 
     function createStar(string starName, string story,  string ra, string dec, string mag, uint256 tokenId) public {
@@ -56,7 +57,7 @@ contract StarNotary is ERC721 {
     }
 
     function exchangeStars(uint256 token1, uint256 token2, address starOwner2) public {
-        require(this.ownerOf(token1) == msg.sender);
+        
         address currentOwner = this.ownerOf(token1);
         address newOwner = starOwner2;
 
