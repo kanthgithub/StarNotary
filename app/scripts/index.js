@@ -99,17 +99,6 @@ const App = {
     });
   },
 
-  createToken : async () => {
-    StarNotary.deployed().then(function(instance){
-      star = instance;
-      return  await star.mintUniqueTokenTo(account, 'se7en', 'SEVN', {from: accounts[0]});
-    }).then(function(error, result){
-      if(error) {
-        hotsnackbar(false, 'Oops! Token cannot be created!');
-      }
-    });   
-  }
-
 }
 
 

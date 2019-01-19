@@ -7,7 +7,6 @@ contract StarNotary is ERC721 {
 
     string public constant name = "SE7EN";
     string public constant symbol = "SVEN";
-    uint256 public constant TokenID = 2409;
 
 
     struct Coordinates {
@@ -23,9 +22,7 @@ contract StarNotary is ERC721 {
     }
 
     mapping(uint256 => Star) public tokenIdToStarInfo; 
-    mapping(uint256 => uint256) public starsForSale;
     mapping(bytes32 => bool) public starHashMap;
-    mapping(uint256 => address) public transferedOwner;
 
 
     function createStar(string starName, string story,  string ra, string dec, string mag, uint256 tokenId) public {
@@ -50,12 +47,6 @@ contract StarNotary is ERC721 {
         _mint(msg.sender, tokenId);
     }
 
-    function putStarUpForSale(uint256 tokenId, uint256 price) public { 
-        require(this.ownerOf(tokenId) == msg.sender);
-
-        starsForSale[tokenId] = price;
-    }
-
     function exchangeStars(uint256 token1, uint256 token2, address starOwner2) public {
         
         address currentOwner = this.ownerOf(token1);
@@ -65,34 +56,16 @@ contract StarNotary is ERC721 {
 
         transferFrom(currentOwner, newOwner, token1);
 
-        approve(currentOwner, token2);
-
         transferFrom(newOwner, currentOwner, token2);
 
     }
 
-    function buyStar(uint256 tokenId) public payable { 
-        require(starsForSale[tokenId] > 0);
-        
-        uint256 starCost = starsForSale[tokenId];
-        address starOwner = this.ownerOf(tokenId);
-        require(msg.value >= starCost);
+    function transferStar(address newStarOwner, uint256 tokenId) public {
+        address currentOwner = this.ownerOf(tokenId);
+        address newOwner = newStarOwner;
+        require(currentOwner != newOwner);
 
-        _removeTokenFrom(starOwner, tokenId);
-        _addTokenTo(msg.sender, tokenId);
-        
-        starOwner.transfer(starCost);
-
-        if (msg.value > starCost) { 
-            msg.sender.transfer(msg.value - starCost);
-        }
-    }
-
-    function transferStar(address transferTo, uint256 tokenId) public payable {
-        require(this.ownerOf(tokenId) == msg.sender);
-        
-        _removeTokenFrom(msg.sender, tokenId);
-        _addTokenTo(transferTo, tokenId);
+        transferFrom(currentOwner, newOwner, tokenId);
     }
 
     function checkIfStarExist(string ra, string dec, string mag) public view returns(bool) {
