@@ -7,13 +7,6 @@ contract StarNotary is ERC721 {
 
     string public constant name = "SE7EN";
     string public constant symbol = "SVEN";
-    uint public _totalSupply;
-    mapping (address => uint) balances;
-
-    constructor() public {
-        _totalSupply = 10;
-        balances[address(0)] = _totalSupply;
-    }
 
 
     struct Coordinates {
