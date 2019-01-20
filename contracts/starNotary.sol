@@ -7,6 +7,13 @@ contract StarNotary is ERC721 {
 
     string public constant name = "SE7EN";
     string public constant symbol = "SVEN";
+    uint public _totalSupply;
+    mapping (address => uint) balances;
+
+    constructor() public {
+        _totalSupply = 10;
+        balances[address(0)] = _totalSupply;
+    }
 
 
     struct Coordinates {
@@ -54,9 +61,11 @@ contract StarNotary is ERC721 {
 
         require(currentOwner != newOwner);
 
-        transferFrom(currentOwner, newOwner, token1);
+        _removeTokenFrom(currentOwner, token1);
+        _addTokenTo(newOwner, token1);
 
-        transferFrom(newOwner, currentOwner, token2);
+        _removeTokenFrom(newOwner, token2);
+        _addTokenTo(currentOwner, token2);
 
     }
 
@@ -65,7 +74,8 @@ contract StarNotary is ERC721 {
         address newOwner = newStarOwner;
         require(currentOwner != newOwner);
 
-        transferFrom(currentOwner, newOwner, tokenId);
+        _removeTokenFrom(currentOwner, tokenId);
+        _addTokenTo(newOwner, tokenId);
     }
 
     function checkIfStarExist(string ra, string dec, string mag) public view returns(bool) {
