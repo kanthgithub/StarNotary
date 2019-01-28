@@ -7,8 +7,8 @@ An ERC721 Non-fungible token to claim ownership of the stars in the sky
 Add Smart Contract Functions: 
 
 - Add a name and a symbol to the starNotary tokens.
-- Add a function ```js lookUptokenIdToStarInfo ```, that looks up the stars using the Token ID, and then returns the name of the star.
-- Add a function called ```js exchangeStars ```, so 2 users can exchange their star tokens. Do not worry about the price, just write code to exchange stars between users.
+- Add a function ```lookUptokenIdToStarInfo```, that looks up the stars using the Token ID, and then returns the name of the star.
+- Add a function called ```exchangeStars```, so 2 users can exchange their star tokens. Do not worry about the price, just write code to exchange stars between users.
 - Write a function to Transfer a Star. The function should transfer a star from the address of the caller. The function should accept 2 arguments, the address to transfer the star to, and the token ID of the star.
 
 Add supporting Unit Tests:
