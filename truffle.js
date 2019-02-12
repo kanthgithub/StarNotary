@@ -2,8 +2,8 @@
 require('babel-register')
 var HDWalletProvider = require('truffle-hdwallet-provider');
 
-const mnemonic = 'aim consider north pig logic siren sugar gas term try alcohol flower';
-const infura = 'https://rinkeby.infura.io/v3/d530853c676f4b0e9c0b97d4fdfc8324'
+const mnemonic = 'Enter your Mist wallet Mnemonic Passphrase';
+const infura = 'https://rinkeby.infura.io/v3/API-Key'
 
 // Edit truffle.config file should have settings to deploy the contract to the Rinkeby Public Network.
 // Infura should be used in the truffle.config file for deployment to Rinkeby.
